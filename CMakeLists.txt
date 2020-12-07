@@ -19,6 +19,8 @@ set_target_properties(UsageEnvironment PROPERTIES IMPORTED_LOCATION ${UsageEnvir
 add_library(BasicUsageEnvironment STATIC IMPORTED)
 set_target_properties(BasicUsageEnvironment PROPERTIES IMPORTED_LOCATION ${BasicUsageEnvironmentLib})
 
+find_package(Boost REQUIRED)
 add_executable(RtspProxyTestingOnLinux main.cpp)
 target_include_directories(RtspProxyTestingOnLinux PRIVATE ${OPENSSL_INCLUDE_DIR})
-target_link_libraries(RtspProxyTestingOnLinux liveMedia BasicUsageEnvironment UsageEnvironment groupsock OpenSSL::SSL OpenSSL::Crypto)
+target_link_libraries(RtspProxyTestingOnLinux PRIVATE
+        liveMedia BasicUsageEnvironment UsageEnvironment groupsock OpenSSL::SSL OpenSSL::Crypto Boost::boost)

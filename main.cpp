@@ -38,6 +38,7 @@ char* passwordForREGISTER = NULL;
 
 #include <string>
 #include <iostream>
+#include <boost/signals2.hpp>
 
 static RTSPServer* createRTSPServer(Port port) {
     if (proxyREGISTERRequests) {
@@ -254,6 +255,15 @@ int main(int argc, char** argv) {
     } else {
         *env << "\n(RTSP-over-HTTP tunneling is not available.)\n";
     }
+
+    boost::signals2::signal<void(int)> s;
+    s.connect([](int i){
+        std::cout << i << '\n';
+    });
+    for (int i = 0; i < 100; ++i)   {
+        s(i);
+    }
+
 
     // Now, enter the event loop:
     env->taskScheduler().doEventLoop(); // does not return
