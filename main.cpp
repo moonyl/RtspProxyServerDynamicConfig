@@ -36,6 +36,9 @@ Boolean proxyREGISTERRequests = False;
 char* usernameForREGISTER = NULL;
 char* passwordForREGISTER = NULL;
 
+#include <string>
+#include <iostream>
+
 static RTSPServer* createRTSPServer(Port port) {
     if (proxyREGISTERRequests) {
         return RTSPServerWithREGISTERProxying::createNew(*env, port, authDB, authDBForREGISTER, 65, streamRTPOverTCP, verbosityLevel, username, password);
@@ -213,11 +216,19 @@ int main(int argc, char** argv) {
     for (i = 1; i < argc; ++i) {
         char const* proxiedStreamURL = argv[i];
         char streamName[30];
-        if (argc == 2) {
-            sprintf(streamName, "%s", "proxyStream"); // there's just one stream; give it this name
-        } else {
-            sprintf(streamName, "proxyStream-%d", i); // there's more than one stream; distinguish them by name
-        }
+
+        std::string proxied(proxiedStreamURL);
+        auto pos = proxied.find("://");
+        auto withoutScheme = proxied.substr(pos+3);
+        std::cout << "withoutScheme: " << withoutScheme << std::endl;
+
+//        sprintf(streamName, "%s", proxiedStreamURL);
+//        if (argc == 2) {
+//            sprintf(streamName, "%s", "proxyStream"); // there's just one stream; give it this name
+//        } else {
+//            sprintf(streamName, "proxyStream-%d", i); // there's more than one stream; distinguish them by name
+//        }
+        sprintf(streamName, "%s", withoutScheme.c_str());
         ServerMediaSession* sms
                 = ProxyServerMediaSession::createNew(*env, rtspServer,
                                                      proxiedStreamURL, streamName,
